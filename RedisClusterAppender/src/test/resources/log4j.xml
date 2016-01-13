@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE log4j:configuration SYSTEM "log4j.dtd">
+<log4j:configuration debug="true"
+	xmlns:log4j='http://jakarta.apache.org/log4j/'>
+
+	<appender name="console" class="org.apache.log4j.ConsoleAppender">
+	    <layout class="org.apache.log4j.PatternLayout">
+		<param name="ConversionPattern" 
+		  value="%d{yyyy-MM-dd HH:mm:ss} %-5p %c{1}:%L - %m%n" />
+	    </layout>
+	</appender>
+	
+	<appender name="redisClusterAppender" class="com.twm.ips.log4j.appender.RedisClusterAppender">
+		<layout class="com.twm.ips.log4j.layout.LogstashJsonEventLayout">
+			<param name="systemID" value="IPS" />
+		</layout>
+		<param name="hosts" value="172.20.10.2[7000,7001,7002,7003,7004,7005]" />
+		<param name="key" value="logstash" />
+		<param name="period" value="30000" />
+		<param name="batchSize" value="20" />
+		<param name="purgeOnFailure" value="true" />
+		<param name="archiveOnFailure" value="/tmp/redisCluster.log" />
+		<param name="batchPush" value="true" />
+	</appender>
+	
+	<logger name="redis" additivity="false">
+		<level value="FATAL" />
+		<appender-ref ref="redisClusterAppender" />
+	</logger>
+
+	<root>
+		<level value="DEBUG" />
+		<appender-ref ref="console" />
+	</root>
+
+</log4j:configuration>
