@@ -19,7 +19,7 @@ public class AopTest {
 	public void testAop() {
 		TestBean bean = new TestBean();
 		bean.setA("@LogID");
-		bean.setB("@LogLocation");
+		bean.setB("180.204.176.241");
 		bean.setC("@LogField");
 		bean.setD("@LogField(changeName)");
 		bean.setE("@LogIgnored");
@@ -28,7 +28,7 @@ public class AopTest {
 
 		InnerTestBean bean2 = new InnerTestBean();
 		bean2.setA("@LogID");
-		bean2.setB("@LogLocation");
+		bean2.setB("180.204.176.241");
 		bean2.setC("@LogField");
 		bean2.setD("@LogField(changeName)");
 		bean2.setE("@LogIgnored");
@@ -37,7 +37,7 @@ public class AopTest {
 
 		innerTestBean2 bean3 = new innerTestBean2();
 		bean3.setA("@LogID");
-		bean3.setB("@LogLocation");
+		bean3.setB("180.204.176.241");
 		bean3.setC("@LogField");
 		bean3.setD("@LogField(changeName)");
 		bean3.setE("@LogIgnored");
@@ -46,7 +46,7 @@ public class AopTest {
 
 		bean2.setBean(bean3);
 		bean.setBean(bean2);
-		service.request(bean, "123","456");
+		service.request(bean, "123id","功能(auth)","其他");
 	}
 
 }

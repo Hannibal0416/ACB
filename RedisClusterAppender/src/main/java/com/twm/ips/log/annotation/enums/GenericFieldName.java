@@ -1,5 +1,14 @@
 package com.twm.ips.log.annotation.enums;
 
 public enum GenericFieldName {
-	ID,GeoLocation,SystemID,timestamp,hostname
+	id,
+	geoLocation,
+	systemID,
+	timestamp,
+	hostname,
+	requestTimestamp,
+	responseTimestamp,
+	totalTimeMillis,
+	functionName,
+	methodName
 }

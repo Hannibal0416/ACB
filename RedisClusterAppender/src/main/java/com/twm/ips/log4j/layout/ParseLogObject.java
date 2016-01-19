@@ -36,14 +36,16 @@ public class ParseLogObject {
 
 		if(response != null) {
 			params.put("response", reponseMap);
-			Class cls = Class.forName(request.getClass().getName());
+			Class cls = Class.forName(response.getClass().getName());
 			Field fieldList[] = cls.getDeclaredFields();
+			reponseMap.put("objectName", cls.getName());
 			parseField(fieldList,response,reponseMap);
 		}
 		if(request != null) {
 			params.put("request", requestMap);
 			Class cls = Class.forName(request.getClass().getName());
 			Field fieldList[] = cls.getDeclaredFields();
+			requestMap.put("objectName", cls.getSimpleName());
 			parseField(fieldList,request,requestMap);
 		}
 	
@@ -93,12 +95,12 @@ public class ParseLogObject {
     			}
     			
     		} else if (anno instanceof LogID) {
-    			this.params.put(GenericFieldName.ID.toString(), field.get(beanObj));
-    			params.put(GenericFieldName.ID.toString(), field.get(beanObj));
+    			this.params.put(GenericFieldName.id.toString(), field.get(beanObj));
+    			params.put(GenericFieldName.id.toString(), field.get(beanObj));
     		} else if (anno instanceof LogIgnored) {
     			// do nothing
     		} else if (anno instanceof LogLocation) {
-    			this.params.put(GenericFieldName.GeoLocation.toString(), field.get(beanObj));
+    			this.params.put(GenericFieldName.geoLocation.toString(), field.get(beanObj));
     		// if annotations are not in the IPS annotations.
     		} else {
     			params.put(field.getName(), field.get(beanObj));

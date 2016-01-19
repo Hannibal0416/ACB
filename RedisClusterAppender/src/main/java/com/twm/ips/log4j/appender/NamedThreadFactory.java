@@ -4,7 +4,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.atomic.AtomicInteger;
 
-class NamedThreadFactory implements ThreadFactory {
+public class NamedThreadFactory implements ThreadFactory {
 
 	private final String prefix;
 	private final ThreadFactory threadFactory;
