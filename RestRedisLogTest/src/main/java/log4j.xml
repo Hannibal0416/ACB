@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE log4j:configuration SYSTEM "log4j.dtd">
+<log4j:configuration debug="true"
+	xmlns:log4j='http://jakarta.apache.org/log4j/'>
+
+	<appender name="console" class="org.apache.log4j.ConsoleAppender">
+	    <layout class="org.apache.log4j.PatternLayout">
+		<param name="ConversionPattern" 
+		  value="%d{yyyy-MM-dd HH:mm:ss} %-5p %c{1}:%L - %m%n" />
+	    </layout>
+	</appender>
+	
+	<appender name="redisClusterAppender" class="com.twm.ips.log4j.appender.RedisClusterAppender">
+		<layout class="com.twm.ips.log4j.layout.LogstashJsonEventLayout">
+			<!-- systemID must be lowercase, Because elasticsearch doesn't allow the uppercase indies name -->
+			<param name="systemID" value="ips" />
+			<param name="localTimeZone" value="UTC" />
+		</layout>
+		<param name="hosts" value="172.20.10.2[7000,7001,7002,7003,7004,7005]" />
+		<param name="key" value="logstash" />
+		<param name="period" value="30000" />
+		<param name="archivePeriod" value="30000" />
+		<param name="batchSize" value="20" />
+		<param name="purgeOnFailure" value="true" />
+		<param name="archiveOnFailure" value="/tmp/redisCluster.log" />
+		<param name="batchPush" value="true" />
+	</appender>
+	
+	<logger name="redisClusterLogger" additivity="false">
+		<!-- The value attribute of level must be "INFO", Don't change it -->
+		<level value="INFO" />
+		<appender-ref ref="redisClusterAppender" />
+	</logger>
+
+	<root>
+		<level value="DEBUG" />
+		<appender-ref ref="console" />
+	</root>
+
+</log4j:configuration>
