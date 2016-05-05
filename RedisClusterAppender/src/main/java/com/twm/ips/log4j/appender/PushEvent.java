@@ -5,6 +5,7 @@ public class PushEvent implements Runnable {
 	
 	private RedisClusterService service;
 	
+	
 	@Override
 	public void run() {
 		service.pushEvent();
@@ -17,7 +18,6 @@ public class PushEvent implements Runnable {
 	public void setService(RedisClusterService service) {
 		this.service = service;
 	}
-	
 	
 
 }

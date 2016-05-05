@@ -2,8 +2,8 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.twm.ips</groupId>
-	<artifactId>RedisClusterAppender</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<artifactId>redis-cluster-appender</artifactId>
+	<version>0.1.0</version>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
@@ -16,6 +16,14 @@
 		<spring.version>4.2.4.RELEASE</spring.version>
 		<aspectj.version>1.8.8</aspectj.version>
 	</properties>
+	<profiles>
+		<profile>
+	      <id>compiler</id>
+	        <properties>
+	          <JAVA_1_7_HOME>D:\Software\JAVA\jdk-7u79</JAVA_1_7_HOME>
+	        </properties>
+	    </profile>
+    </profiles>
 	<dependencies>
 		<dependency>
 			<groupId>log4j</groupId>
@@ -113,11 +121,22 @@
 							<overWriteReleases>false</overWriteReleases>
 							<overWriteSnapshots>false</overWriteSnapshots>
 							<overWriteIfNewer>true</overWriteIfNewer>
-							<excludeScope>test</excludeScope>
+<!-- 							<excludeScope>test</excludeScope> -->
 						</configuration>
 					</execution>
 				</executions>
 			</plugin>
+<!-- 			<plugin> -->
+<!-- 				<groupId>org.apache.maven.plugins</groupId> -->
+<!-- 				<artifactId>maven-compiler-plugin</artifactId> -->
+<!-- 				<version>3.1</version> -->
+<!-- 				<configuration> -->
+<!-- 					<verbose>true</verbose> -->
+<!-- 					<fork>true</fork> -->
+<!-- 					<executable>${JAVA_1_7_HOME}/bin/javac</executable> -->
+<!-- 					<compilerVersion>1.7</compilerVersion> -->
+<!-- 				</configuration> -->
+<!-- 			</plugin> -->
 		</plugins>
 	</build>
 </project>

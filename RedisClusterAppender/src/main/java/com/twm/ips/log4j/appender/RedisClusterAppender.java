@@ -1,24 +1,22 @@
 package com.twm.ips.log4j.appender;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.exception.ExceptionUtils;
 import org.apache.log4j.AppenderSkeleton;
 import org.apache.log4j.Layout;
-import org.apache.log4j.helpers.LogLog;
+import org.apache.log4j.Logger;
 import org.apache.log4j.spi.ErrorCode;
 import org.apache.log4j.spi.LoggingEvent;
 import org.springframework.beans.BeanUtils;
 
-import redis.clients.jedis.JedisCluster;
-import redis.clients.util.SafeEncoder;
+
 
 /**
  * 
@@ -26,7 +24,7 @@ import redis.clients.util.SafeEncoder;
  *
  */
 public class RedisClusterAppender extends AppenderSkeleton {
-
+	private Logger log = Logger.getLogger(RedisClusterAppender.class);
 	private String hosts = "localhost(7000)";
 	private String password;
 	private String key;
@@ -48,6 +46,7 @@ public class RedisClusterAppender extends AppenderSkeleton {
     //Task
     private ScheduledExecutorService pushEventExecutor;
     private ScheduledFuture<?> pushEventTask;
+    private ExecutorService pushEventExecutorService;
 	private PushEvent pushEvent;
 	private ReadArchivedLog readArchivedLog;
     private ScheduledExecutorService archiveExecutor;
@@ -90,17 +89,29 @@ public class RedisClusterAppender extends AppenderSkeleton {
 				if (pushEventExecutor == null) 
 					pushEventExecutor = Executors.newSingleThreadScheduledExecutor(new NamedThreadFactory(pushEvent.getClass().getName(), daemonThread));
 				pushEventTask = pushEventExecutor.scheduleWithFixedDelay(pushEvent, period, period, TimeUnit.MILLISECONDS);
+			} else {
+				pushEventExecutorService = Executors.newFixedThreadPool(10);
 			}
-			if(StringUtils.isNotEmpty(archiveOnFailure)) {
-				if (archiveTask != null && !archiveTask.isDone()) 
-					archiveTask.cancel(true);
-				if (archiveExecutor == null) 
-					archiveExecutor = Executors.newSingleThreadScheduledExecutor(new NamedThreadFactory(readArchivedLog.getClass().getName(), daemonThread));
-				archiveTask = archiveExecutor.scheduleWithFixedDelay(readArchivedLog, archivePeriod, archivePeriod, TimeUnit.MILLISECONDS);
-			}
+//			if(StringUtils.isNotEmpty(archiveOnFailure)) {
+//				if (archiveTask != null && !archiveTask.isDone()) 
+//					archiveTask.cancel(true);
+//				if (archiveExecutor == null) 
+//					archiveExecutor = Executors.newSingleThreadScheduledExecutor(new NamedThreadFactory(readArchivedLog.getClass().getName(), daemonThread));
+//				archiveTask = archiveExecutor.scheduleWithFixedDelay(readArchivedLog, archivePeriod, archivePeriod, TimeUnit.MILLISECONDS);
+//			}
 			Runtime.getRuntime().addShutdownHook(new Thread(pushEvent));
+			Runtime.getRuntime().addShutdownHook(new Thread(new Runnable() {
+
+				@Override
+				public void run() {
+					log.info("pushEvent shutdown");
+					
+				}
+				
+			}));
 		} catch (Exception e) {
-			LogLog.error(this.getClass().getName() + ": Error during activateOptions", e);
+			log.error(this.getClass().getName() + ": Error during activateOptions");
+			log.error(ExceptionUtils.getStackTrace(e));
 		}
 	}
 
@@ -116,10 +127,18 @@ public class RedisClusterAppender extends AppenderSkeleton {
 		try {
 			populateEvent(event);
 			events.add(event);
-			if(events.size() >= batchSize) 
-				pushEventExecutor.execute(pushEvent);
+			log.debug(String.valueOf(events.size()));
+			if(events.size() >= batchSize) {
+				if(batchPush) {
+					pushEventExecutor.execute(pushEvent);
+				} else {
+					pushEventExecutorService.execute(pushEvent);
+				}
+			}
+				
 		} catch (Exception e) {
 			errorHandler.error("Error populating event and adding Redis to queue", e, ErrorCode.GENERIC_FAILURE, event);
+			log.error(ExceptionUtils.getStackTrace(e));
 		}
 	}
 	

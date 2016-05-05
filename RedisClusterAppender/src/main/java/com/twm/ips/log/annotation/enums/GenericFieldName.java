@@ -2,13 +2,20 @@ package com.twm.ips.log.annotation.enums;
 
 public enum GenericFieldName {
 	id,
-	geoLocation,
+	clientIP,
+	serviceName,
 	systemID,
 	timestamp,
+	sourceTimestamp,
 	hostname,
 	requestTimestamp,
 	responseTimestamp,
+	localTimeMillis,
+	sourceTimeMillis,
 	totalTimeMillis,
 	functionName,
-	methodName
+	methodName,
+	className,
+	classSimpleName,
+	exceptionMessage
 }

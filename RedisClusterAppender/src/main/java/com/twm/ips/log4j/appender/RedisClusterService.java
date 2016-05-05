@@ -22,7 +22,7 @@ import org.springframework.beans.BeanUtils;
 import redis.clients.util.SafeEncoder;
 
 public class RedisClusterService {
-	private Logger log = Logger.getLogger(PushEvent.class);
+	private Logger log = Logger.getLogger(RedisClusterService.class);
 	private RedisClusterDAO dao;
 	private Queue<LoggingEvent> events;
 	private Layout layout;
@@ -46,6 +46,7 @@ public class RedisClusterService {
 				}
 				archiveFile.delete();
 			} catch (IOException e) {
+				archiveFile.delete();
 				log.error(ExceptionUtils.getStackTrace(e));
 			}
 		}
@@ -84,13 +85,16 @@ public class RedisClusterService {
 		} finally {
 			if(exceptionFlag) {
 				if (StringUtils.isNotEmpty(archiveOnFailure)) {
-					LogLog.debug("Archiving Redis event queue");
+					log.debug("Archiving Redis event queue");
 					if (eventErrorBuffer != null && eventErrorBuffer.size() > 0) {
-						archiveEventToFile(eventErrorBuffer);
+						log.debug("Archiving Redis event queue size:" + eventErrorBuffer.size());
+//						if(StringUtils.isNotEmpty(archiveOnFailure)) {
+//							archiveEventToFile(eventErrorBuffer);
+//						}
 					}
 				}
 				if (purgeOnFailure) {
-					LogLog.debug("Purging Redis event queue");
+					log.debug("Purging Redis event queue");
 					events.clear();
 				}
 			}

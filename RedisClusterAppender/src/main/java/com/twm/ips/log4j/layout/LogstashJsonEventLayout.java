@@ -6,14 +6,15 @@ import java.util.TimeZone;
 
 import org.apache.commons.lang.time.FastDateFormat;
 import org.apache.log4j.Layout;
-import org.apache.log4j.helpers.LogLog;
+import org.apache.log4j.Logger;
 import org.apache.log4j.spi.LoggingEvent;
+import org.springframework.util.ObjectUtils;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.twm.ips.log.annotation.enums.GenericFieldName;
 
 public class LogstashJsonEventLayout extends Layout {
-
+	private Logger log = Logger.getLogger(LogstashJsonEventLayout.class);
 	public static TimeZone TIME_ZONE;
 	private String localTimeZone;
 	
@@ -21,6 +22,7 @@ public class LogstashJsonEventLayout extends Layout {
 	private boolean ignoreThrowable = false;
 	private String hostname = new HostData().getHostName();
 	private String systemID;
+	private String serviceName;
 
 	public static String dateFormat(long timestamp) {
 		return ISO_DATETIME_TIME_ZONE_FORMAT_WITH_MILLIS.format(timestamp);
@@ -41,16 +43,36 @@ public class LogstashJsonEventLayout extends Layout {
 			long timestamp = event.getTimeStamp();
 			ParseLogObject plo = new ParseLogObject();
 			Map message = (HashMap<String,Object>)event.getMessage();
+			//keep id
+			Object id = message.get(GenericFieldName.id.toString());
+			Object functionName = message.get(GenericFieldName.functionName.toString());
 			message.put(GenericFieldName.systemID.toString(), systemID);
+			message.put(GenericFieldName.serviceName.toString(), systemID);
 			message.put("@"+GenericFieldName.timestamp.toString(), dateFormat(timestamp));
 			message.put(GenericFieldName.hostname.toString(), hostname);
-			message.put(GenericFieldName.requestTimestamp.toString(), dateFormat((Long)message.get(GenericFieldName.responseTimestamp.toString())));
-			message.put(GenericFieldName.responseTimestamp.toString(), dateFormat((Long)message.get(GenericFieldName.responseTimestamp.toString())));
 			plo.parse(message);
+			
+			if(message.get(GenericFieldName.sourceTimestamp.toString())!=null){
+				Long requestTimestamp = (Long)message.get(GenericFieldName.requestTimestamp.toString());
+				Long sourceTimestamp = (Long)message.get(GenericFieldName.sourceTimestamp.toString());
+				Long responseTimestamp = (Long)message.get(GenericFieldName.responseTimestamp.toString());
+				Long totalTimeMillis = responseTimestamp - sourceTimestamp;
+				Long sourceTimeMillis = requestTimestamp - sourceTimestamp;
+				message.put(GenericFieldName.sourceTimestamp.toString(), dateFormat((Long)message.get(GenericFieldName.sourceTimestamp.toString())));
+				message.put(GenericFieldName.totalTimeMillis.toString(), totalTimeMillis);
+				message.put(GenericFieldName.sourceTimeMillis.toString(), sourceTimeMillis);
+			}
+			message.put(GenericFieldName.requestTimestamp.toString(), dateFormat((Long)message.get(GenericFieldName.requestTimestamp.toString())));
+			message.put(GenericFieldName.responseTimestamp.toString(), dateFormat((Long)message.get(GenericFieldName.responseTimestamp.toString())));
+			
+			if(!ObjectUtils.isEmpty(functionName)) 
+				message.put(GenericFieldName.functionName.toString(), functionName );
+			if(!ObjectUtils.isEmpty(id))
+				message.put(GenericFieldName.id.toString(), id);
 			mapAsJson = new ObjectMapper().writeValueAsString(message);
 			return mapAsJson;
 		} catch(Exception e) {
-			LogLog.error(this.getClass().getName() + ": error while converting message to json string", e);
+			log.error(this.getClass().getName() + ": error while convert message to json string", e);
 		}
 		return mapAsJson;
 		
@@ -75,6 +97,14 @@ public class LogstashJsonEventLayout extends Layout {
 
 	public void setLocalTimeZone(String localTimeZone) {
 		this.localTimeZone = localTimeZone;
+	}
+
+	public String getServiceName() {
+		return serviceName;
+	}
+
+	public void setServiceName(String serviceName) {
+		this.serviceName = serviceName;
 	}
 	
 

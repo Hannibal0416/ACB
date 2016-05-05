@@ -2,15 +2,11 @@ package com.twm.ips.log4j.appender;
 
 import java.security.InvalidParameterException;
 import java.util.HashSet;
-import java.util.Queue;
 import java.util.Set;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.ScheduledFuture;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.commons.pool2.impl.GenericObjectPoolConfig;
-import org.apache.log4j.spi.LoggingEvent;
 
 import redis.clients.jedis.HostAndPort;
 import redis.clients.jedis.JedisCluster;

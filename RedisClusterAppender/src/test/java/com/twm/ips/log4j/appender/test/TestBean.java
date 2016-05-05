@@ -1,17 +1,17 @@
 package com.twm.ips.log4j.appender.test;
 
+import com.twm.ips.log.annotation.LogClientIP;
 import com.twm.ips.log.annotation.LogEncryption;
 import com.twm.ips.log.annotation.LogField;
 import com.twm.ips.log.annotation.LogID;
 import com.twm.ips.log.annotation.LogIgnored;
-import com.twm.ips.log.annotation.LogLocation;
 import com.twm.ips.log.annotation.enums.EncryptionAlogrithm;
 
 public class TestBean {
 	@LogID
 	private String a;
 	
-	@LogLocation
+	@LogClientIP
 	private String b;
 	
 	@LogField
