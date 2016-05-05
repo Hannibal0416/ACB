@@ -1,0 +1,35 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:sec="http://www.springframework.org/schema/security" xmlns:task="http://www.springframework.org/schema/task"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans 
+                        http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+                        http://www.springframework.org/schema/context
+                        http://www.springframework.org/schema/context/spring-context-3.0.xsd
+                        http://www.springframework.org/schema/security
+                        http://www.springframework.org/schema/security/spring-security-4.0.xsd">
+	<context:annotation-config />
+	<sec:http pattern="/OK.html" security="none" />
+	
+	<sec:http create-session="stateless">
+		<sec:intercept-url pattern="/service/**" access="hasRole('ROLE_REST')" />
+<!-- 		<sec:intercept-url pattern="/proxy/**" access="permitAll" /> -->
+		<sec:http-basic/>
+		<sec:csrf disabled="true"/>
+	</sec:http>
+
+	<sec:authentication-manager>
+        <sec:authentication-provider>
+            <sec:user-service>
+                <sec:user name="rest" password="rest" authorities="ROLE_REST"/>
+            </sec:user-service>
+<!--             <sec:password-encoder ref="encoder"></sec:password-encoder> -->
+        </sec:authentication-provider>
+    </sec:authentication-manager>
+
+	<bean id="encoder"
+		class="org.springframework.security.crypto.password.StandardPasswordEncoder">
+	</bean>
+
+</beans>

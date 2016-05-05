@@ -9,7 +9,7 @@
 	<!-- bean definition & AOP specific configuration -->
 	<aop:config>
 		<aop:aspect id="redisAspect" ref="redisLoggingAspect">
-			<aop:pointcut id="ACBService" expression="execution(* com.twm.ips.web.*.*(..))" />
+			<aop:pointcut id="ACBService" expression="execution(* com.twm.ips.web.entry.*.*(..)) ||  execution(* com.twm.ips.web.departure.*.*(..))" />
 			<aop:around pointcut-ref="ACBService" method="logAround" />
 		</aop:aspect>
 	</aop:config>

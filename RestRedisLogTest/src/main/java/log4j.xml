@@ -12,18 +12,19 @@
 	
 	<appender name="redisClusterAppender" class="com.twm.ips.log4j.appender.RedisClusterAppender">
 		<layout class="com.twm.ips.log4j.layout.LogstashJsonEventLayout">
-			<!-- systemID must be lowercase, Because elasticsearch doesn't allow the uppercase indies name -->
+			<!-- systemID and serviceName must be lowercase, Because elasticsearch doesn't allow the uppercase index name -->
+			<param name="serviceName" value="acb" />
 			<param name="systemID" value="ips" />
 			<param name="localTimeZone" value="UTC" />
 		</layout>
-		<param name="hosts" value="172.20.10.2[7000,7001,7002,7003,7004,7005]" />
-		<param name="key" value="logstash" />
+		<param name="hosts" value="172.16.24.240[30001,30002,30003,30004,30005,30006]" />
+		<param name="key" value="acb" />
 		<param name="period" value="30000" />
 		<param name="archivePeriod" value="30000" />
 		<param name="batchSize" value="20" />
-		<param name="purgeOnFailure" value="true" />
 		<param name="archiveOnFailure" value="/tmp/redisCluster.log" />
 		<param name="batchPush" value="true" />
+		<param name="Threshold" value="INFO"/>
 	</appender>
 	
 	<logger name="redisClusterLogger" additivity="false">
@@ -31,6 +32,11 @@
 		<level value="INFO" />
 		<appender-ref ref="redisClusterAppender" />
 	</logger>
+	
+<!-- 	<logger name="com.twm.ips.log"> -->
+<!-- 		<level value="INFO" /> -->
+<!-- 		<appender-ref ref="console" /> -->
+<!-- 	</logger> -->
 
 	<root>
 		<level value="DEBUG" />

@@ -1,28 +1,30 @@
 package com.twm.ips.web.dto;
 
+import com.twm.ips.log.annotation.LogField;
+
 public class HelloResponse {
-	private long id;
-	private String content;
+	
+	private long helloResponseID;
+	
+	@LogField("responseResult")
+	private String result;
 
-	public HelloResponse(long id, String content) {
-		this.id = id;
-		this.content = content;
+	public long getHelloResponseID() {
+		return helloResponseID;
 	}
 
-	public long getId() {
-		return id;
+	public void setHelloResponseID(long helloResponseID) {
+		this.helloResponseID = helloResponseID;
 	}
 
-	public void setId(long id) {
-		this.id = id;
+	public String getResult() {
+		return result;
 	}
 
-	public String getContent() {
-		return content;
+	public void setResult(String result) {
+		this.result = result;
 	}
-
-	public void setContent(String content) {
-		this.content = content;
-	}
+	
+	
 	
 }

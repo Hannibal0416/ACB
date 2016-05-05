@@ -17,10 +17,8 @@
 		<context:include-filter type="annotation" expression="org.springframework.stereotype.Controller"/>
 	</context:component-scan>
 	<import resource="classpath:conf/spring-aop.xml"/>
-	<context:annotation-config></context:annotation-config>
-<!-- 	<mvc:default-servlet-handler/> -->
-<!-- 	<tx:annotation-driven /> -->
-	<mvc:annotation-driven/>
+	<context:annotation-config/>
+<!-- 	<mvc:annotation-driven/> -->
 	<bean id="stringHttpMessageConverter" class="org.springframework.http.converter.StringHttpMessageConverter"></bean>
 	<bean id="mappingJacksonHttpMessageConverter" class="org.springframework.http.converter.json.MappingJackson2HttpMessageConverter">
 	</bean>
